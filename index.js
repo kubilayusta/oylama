@@ -29,11 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Ana sayfa yönlendirmesi
 
 app.get('/', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'dashboard.html'));
-});
-
-app.get('/dashboard.html', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'dashboard.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get('/dashboard-kullanicilar.html', (_req, res) => {
