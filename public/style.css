@@ -218,7 +218,7 @@ body {
 }
 
 .header .navbar {
-    scroll-margin-top: 60px;
+    scroll-margin-top: 6px;
     /* Section başlıkları için 60px boşluk */
     display: flex;
     align-items: center;
@@ -411,7 +411,7 @@ body {
 }
 
 .sidebar {
-    width: 25000px;
+    width: 250px;
     /* İstediğiniz genişlik */
     background-color: var(--main-color);
     padding: 20px;
