@@ -411,7 +411,7 @@ body {
 }
 
 .sidebar {
-    width: 250px;
+    width: 25000px;
     /* İstediğiniz genişlik */
     background-color: var(--main-color);
     padding: 20px;
