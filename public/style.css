@@ -218,7 +218,7 @@ body {
 }
 
 .header .navbar {
-    scroll-margin-top: 6px;
+    scroll-margin-top: 60px;
     /* Section başlıkları için 60px boşluk */
     display: flex;
     align-items: center;
