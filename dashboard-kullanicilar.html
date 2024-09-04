@@ -8,6 +8,96 @@
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css">
+    <style>
+        html {
+            overflow: hidden;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        h1 {
+
+            /* Stick to the top of the page */
+            background-color: white;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            text-align: center;
+            color: #333;
+
+            margin-bottom: -20px;
+            border: 1px solid black;
+        }
+
+        .table-container {
+            margin-top: 1%;
+            /* Adjust to the height of the fixed h1 */
+            height: 80vh;
+            /* Full viewport height minus the space for h1 */
+            overflow-y: scroll;
+            /* Enable scroll within the table */
+        }
+
+        table {
+            margin-top: 40px;
+            width: 100%;
+            background-color: white;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            border: 1px solid #3a3a3a;
+        }
+
+        th {
+            /* Adjust this value based on the height of the h1 */
+            background-color: white;
+            /* Ensure the header background stays visible */
+            z-index: 999;
+            /* Ensure it stays above other content */
+            background-color: #3a3a3a;
+            color: white;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        tr:nth-child(even) {
+            background-color: #bebdbd;
+        }
+
+        .admin-column .btn-group .btn {
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .admin-column .btn-group .btn:hover {
+            background-color: #0e7708;
+        }
+
+        .admin-column .btn.selected {
+            background-color: #11900a;
+            color: white;
+            border-color: black;
+        }
+
+        .admin-column .btn:not(.selected):hover {
+            background-color: #11900a;
+        }
+    </style>
     <title>Document</title>
 </head>
 
@@ -15,8 +105,8 @@
 
     <div class="login-panel" id="loginPanel">
         <form id="loginForm">
-            <label for="email">E-posta</label>
-            <input type="email" id="email" placeholder="E-posta">
+            <label for="mail">E-posta</label>
+            <input type="mail" id="mail" placeholder="E-posta">
             <label for="password">Şifre</label>
             <input type="password" id="password" placeholder="Şifre">
             <button onclick="submit">Giriş Yap</button>
@@ -30,14 +120,14 @@
             <label for="last_name">Soyad:</label>
             <input type="text" id="last_name" name="last_name" required>
 
-            <label for="email">E-Posta:</label>
-            <input type="email" id="email" name="email" required>
+            <label for="mail">E-Posta:</label>
+            <input type="mail" id="mail" name="mail" required>
 
             <label for="password">Şifre:</label>
             <input type="password" id="password" name="password" required>
 
-            <label for="userType">Kullanıcı Tipi:</label>
-            <select id="userType" name="userType" required>
+            <label for="user_type">Kullanıcı Tipi:</label>
+            <select id="user_type" name="user_type" required>
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
             </select>
@@ -48,114 +138,14 @@
         <div class="message" id="message"></div>
         <div class="error" id="error"></div>
     </div>
-
-    <script>
-        function toggleLoginPanel() {
-            const loginPanel = document.getElementById('loginPanel');
-            loginPanel.style.display = loginPanel.style.display === 'block' ? 'none' : 'block';
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Formun varsayılan davranışını engelle
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Kullanıcı bilgilerini localStorage'a kaydet
-                        localStorage.setItem('loggedInUser', JSON.stringify(data.user));
-
-                        // Dashboard'a yönlendir
-                        window.location.href = 'dashboard.html';
-                    } else {
-                        // Giriş başarısız, hata mesajı göster
-                        alert('Giriş başarısız.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
-
-        document.addEventListener('click', function (event) {
-            const loginPanel = document.getElementById('loginPanel');
-            const loginButton = document.getElementById('login');
-
-            if (!loginPanel.contains(event.target) && !loginButton.contains(event.target)) {
-                // Login panelinin dışına tıklandıysa paneli gizle
-                loginPanel.style.display = 'none';
-            }
-        });
-        function toggleRegisterPanel() {
-            const registerPanel = document.getElementById('registerPanel');
-            registerPanel.style.display = registerPanel.style.display === 'block' ? 'none' : 'block';
-        }
-
-        document.getElementById('registerForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const formData = new FormData(this);
-            const jsonData = {};
-
-            formData.forEach((value, key) => {
-                jsonData[key] = value;
-            });
-
-            fetch('/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(jsonData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    const messageDiv = document.getElementById('message');
-                    const errorDiv = document.getElementById('error');
-
-                    if (data.success) {
-                        messageDiv.textContent = 'Hesap başarıyla oluşturuldu!';
-                        errorDiv.textContent = ''; // Hata mesajını temizle
-                    }
-                    else {
-                        errorDiv.textContent = 'Kayıt başarısız oldu. Lütfen tekrar deneyin.';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('error').textContent = 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.';
-                });
-        });
-
-        document.addEventListener('click', function (event) {
-            const registerPanel = document.getElementById('registerPanel');
-            const registerButton = document.getElementById('register');
-
-            if (!registerPanel.contains(event.target) && !registerButton.contains(event.target)) {
-                // Register panelinin dışına tıklandıysa paneli gizle
-                registerPanel.style.display = 'none';
-            }
-        });
-
-    </script>
     <header class="header">
         <a href="https://www.havelsan.com.tr" class="logo" target="_blank">
-            <img src="images/havelsan.png" alt="logo" />
+            <img src="images/LOGO.PNG" alt="logo" />
         </a>
         <nav class="navbar">
             <a href="/">Ana Sayfa</a>
-            <a href="dashboard-program.html">Program</a>
-            <a href="dashboard-oylama.html" class="active">Yarışmalar</a>
-            <a href="dashboard-kullanicilar.html">Kullanıcılar</a>
+            <a href="dashboard-oylama.html">Yarışmalar</a>
+            <a href="dashboard-kullanicilar.html" class="active">Kullanıcılar</a>
         </nav>
         <div class="buttons">
             <button class="profile-btn" style="display:none;" onclick="toggleProfileMenu()">
@@ -165,113 +155,57 @@
 
             <!-- Login ve Register Butonları -->
             <div class="auth-buttons" id="authButtons">
-                <button id="login" onclick="toggleLoginPanel()">LogIn</button>
-                <button id="register" onclick="toggleRegisterPanel()">Register</button>
+                <button id="login" onclick="toggleLoginPanel()">Giriş Yap</button>
+                <button id="register" onclick="toggleRegisterPanel()">Kayıt Ol</button>
             </div>
         </div>
     </header>
-    <div class="sidebar">
-        <h2>Sidebar Title</h2>
-        <div class="sidebar-sections">
-            <div class="sidebar-section">
-                <input type="text" placeholder="Search Section 1..." class="search-box">
-            </div>
-            <div class="sidebar-section">
-                <input type="text" placeholder="Search Section 2..." class="search-box">
-            </div>
-            <div class="sidebar-section">
-                <input type="text" placeholder="Search Section 3..." class="search-box">
-            </div>
-            <div class="sidebar-section">
-                <input type="text" placeholder="Search Section 4..." class="search-box">
-            </div>
+    <main>
+        <h1>Kullanıcılar</h1>
+        <div class="table-container">
+            <table id="usersTable">
+                <thead id="tableHeaders">
+                </thead>
+                <tbody>
+                    <!-- Rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
         </div>
-    </div>
-    <div class="activity-section">
-        <button class="add-activity-btn" onclick="addActivityBlock()">Add Activity</button>
-        <div class="activity-blocks" id="activityBlocks">
-            <!-- Existing activity blocks will be here -->
-            <div class="activity-block">
-                <h3>Etkinlik 1</h3>
-                <p>Açıklama 1</p>
-            </div>
-            <div class="activity-block">
-                <h3>Etkinlik 2</h3>
-                <p>Açıklama 2</p>
-            </div>
-            <div class="activity-block">
-                <h3>Etkinlik 3</h3>
-                <p>Açıklama 3</p>
-            </div>
-        </div>
-    </div>
-
+    </main>
+    <script src="functions.js"></script>
+    <script src="users.js"></script>
     <script>
-        function toggleProfileMenu() {
-            var menu = document.getElementById('profileMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-            updateProfileMenu();
-        }
-
-        function updateProfileMenu() {
-            var menu = document.getElementById('profileMenu');
-            var user = JSON.parse(localStorage.getItem('loggedInUser'));
-
-            if (user) {
-                // User is logged in
-                menu.innerHTML = `
-                    <div class="profile-header">
-                        <div class="profile-info">
-                            <h3>${user.first_name} ${user.last_name} <span class="user-type">(${user.userType})</span></h3>
-                            <p>${user.email}</p>
-                        </div>
-                    </div>
-                    <button class="account-settings-link" onclick="window.location.href='profile-settings.html'"> Account Settings </button>
-                    <button class="logout-btn" onclick="logout()"> Logout </button>
-                `;
+        var user = JSON.parse(localStorage.getItem('loggedInUser'));
+        function renderHeaders() {
+            const tableHeaders = document.getElementById('tableHeaders');
+            if (user && user.user_type === 'Admin') {
+                headerHTML = `
+                <tr>
+                    <th style="position: fixed; top: 18.5%; left:1.8%; width:  2.5%;" id="id">ID</th>
+                    <th style="position: fixed; top: 18.5%; left:5%; width: 8%;" id="ad">Ad</th>
+                    <th style="position: fixed; top: 18.5%; left:13%; width: 8%;" id="soyad">Soyad</th>
+                    <th style="position: fixed; top: 18.5%; left:22%; width: 34%;" id="email">Email</th>
+                    <th style="position: fixed; top: 18.5%; left:55%; width: 42.1%;" id='admin-column' class="admin-column">Rol</th>
+                </tr>    
+                `
             } else {
-                menu.innerHTML = '';
-            }
+                headerHTML = `
+                <tr>
+                <th style="position: fixed; top: 18.5% ; left:1.8%; width:  5%;">ID</th>
+                <th style="position: fixed; top: 18.5% ; left:7%; width: 15%;">Ad</th>
+                <th style="position: fixed; top: 18.5% ; left:20%; width: 17.5%;">Soyad</th>
+                <th style="position: fixed; top: 18.5% ; left:36%; width: 61.1%;">Email</th>
+                <th style="position: fixed; top: 18.5% ; left:70%; width: 42.1%;" id='admin-column' class="admin-column hidden">Rol</th>
+                </tr>
+            `}
+            tableHeaders.innerHTML = headerHTML;
         }
-
-        function logout() {
-            localStorage.removeItem('loggedInUser');
-            window.location.href = 'dashboard.html';
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const user = JSON.parse(localStorage.getItem('loggedInUser'));
-            const profileBtn = document.querySelector('.profile-btn');
-            const authButtons = document.getElementById('authButtons');
-
-            if (user) {
-                // Kullanıcı oturum açmışsa profil butonunu göster
-                profileBtn.style.display = 'block';
-                authButtons.style.display = 'none';
-            } else {
-                // Kullanıcı oturum açmamışsa giriş ve kayıt butonlarını göster
-                profileBtn.style.display = 'none';
-                authButtons.style.display = 'flex';
-            }
-        });
-    </script>
-    <script>
-        function addActivityBlock() {
-            const activityBlocks = document.getElementById('activityBlocks');
-
-            // Create a new activity block element
-            const newBlock = document.createElement('div');
-            newBlock.classList.add('activity-block');
-
-            // You can customize the content here
-            newBlock.innerHTML = `
-            <h3>New Activity</h3>
-            <p>Description</p>
-        `;
-
-            // Add the new block to the activity section
-            activityBlocks.appendChild(newBlock);
-        }
+        renderHeaders()
+        login()
+        loginpanel()
+        register()
+        registerpanel()
+        loggeduser()
     </script>
 </body>
 
