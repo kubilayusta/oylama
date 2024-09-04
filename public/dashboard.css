@@ -1,0 +1,574 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap");
+
+:root {
+    --main-color: #e84242;
+    --black-color: #0e0e0e;
+    --border: 0.1rem solid rgba(255, 255, 255, 0.4);
+}
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #333 white;
+
+    scroll-padding-top: 60px;
+    overflow-x: hidden;
+}
+
+/* Profil menüsü tasarımı */
+.profile-menu {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 60px;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: auto;
+    width: auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+/* Küçük logout butonu stili */
+
+/* Profil düğmesi tasarımı */
+.header .profile-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    /* Boyut ayarları */
+    width: 40px;
+    /* Butonun genişliği */
+    height: 40px;
+    /* Butonun yüksekliği */
+    padding: 0;
+    /* İç boşlukları sıfırla */
+    font-size: 24px;
+    /* Simge boyutu */
+    border-radius: 50%;
+    /* Yuvarlak buton */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Profil butonunu ortalamak için */
+    margin-right: 40px;
+}
+
+.header .profile-btn i {
+    /* Profil simgesinin boyutunu da ayarlayabilirsiniz */
+    font-size: 24px;
+    /* Simgenin boyutu */
+}
+
+/* Genel stil ayarları */
+* {
+    font-family: "Poppins", sans-serif;
+    outline: none;
+    border: none;
+    height: auto;
+}
+
+body {
+    background-color: var(--main-color);
+}
+
+/* Header stil ayarları */
+.header {
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 7%;
+    margin: -1rem -1rem;
+    box-shadow: 0px 0px 17px -2px rgba(0, 0, 0, 0.75);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: 70px;
+    /* Ensures consistent height */
+}
+
+.header .logo {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    /* Adjust as needed to horizontally center */
+}
+
+.header .logo img {
+    height: 3rem;
+    border-radius: 3px;
+}
+
+.header .navbar {
+    scroll-margin-top: 60px;
+    /* Section başlıkları için 60px boşluk */
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    position: sticky;
+    top: 0;
+    justify-content: center;
+    /* Centers the navbar between the logo and buttons */
+}
+
+.header .navbar a {
+    position: relative;
+    /* Çizginin konumlandırılması için gerekli */
+    color: #333;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    font-size: 15px;
+    text-decoration: none;
+    overflow: hidden;
+    /* Çizgi dışarı taşmaması için */
+}
+
+.header .navbar a:nth-child(1) {
+    top: 0;
+    /* Üstten mesafe */
+    left: -180px;
+    /* Soldan mesafe */
+}
+
+.header .navbar a:nth-child(2) {
+    top: 0;
+    left: -120px;
+    /* 120px soldan mesafe */
+}
+
+.header .navbar a:nth-child(3) {
+    top: 0;
+    left: -60px;
+    /* 240px soldan mesafe */
+}
+
+.header .navbar a:nth-child(4) {
+    top: 0;
+    left: 0px;
+    /* 360px soldan mesafe */
+}
+
+.header .navbar a::after {
+    content: "";
+    /* Boş içerik eklenir */
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #e84242;
+    /* Kırmızı renk */
+    transform: translateX(-100%);
+    /* Başlangıçta gizle */
+    transition: transform 0.3s ease-in-out;
+    /* Geçiş efekti */
+}
+
+.header .navbar a:hover::after,
+.header .navbar a.active::after {
+    transform: translateX(0);
+    /* Mouse ile gelince göster */
+}
+
+.header .buttons {
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+}
+
+.header .buttons .auth-buttons {
+    background: none;
+    border: none;
+    cursor: pointer;
+    /* Boyut ayarları */
+    width: 100%;
+    /* Butonun genişliği */
+    height: 40px;
+    /* Butonun yüksekliği */
+    padding: 0;
+    /* İç boşlukları sıfırla */
+    font-size: 24px;
+    /* Simge boyutu */
+    border-radius: 30px;
+    /* Yuvarlak buton */
+    justify-content: center;
+    /* Profil butonunu ortalamak için */
+    gap: 3px;
+}
+
+.header .buttons .auth-buttons button {
+    background-color: #6e6e6e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.header .buttons .auth-buttons button:hover {
+    background-color: #313131;
+}
+
+.login-panel {
+    display: none;
+    /* Başlangıçta gizli */
+    position: fixed;
+    top: 33%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px;
+}
+
+.login-panel input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.login-panel button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #e84242;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 3s;
+}
+
+.login-panel button:hover {
+    background-color: #c73131;
+}
+
+.register-panel {
+    display: none;
+    /* Başlangıçta gizli */
+    position: fixed;
+    top: 46%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px;
+}
+
+.register-panel input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.register-panel button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #e84242;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 3s;
+}
+
+.register-panel button:hover {
+    background-color: #c73131;
+}
+
+.sidebar {
+    width: 250px;
+    /* İstediğiniz genişlik */
+    background-color: var(--main-color);
+    padding: 20px;
+    height: calc(100vh - 70px);
+    /* Header yüksekliği kadar boşluk */
+    overflow-y: auto;
+    position: fixed;
+    /* Sabit konum */
+    margin: 40px 100px;
+    /* Navbar yüksekliği kadar boşluk */
+    left: 0;
+    z-index: 999;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: rgb(21, 21, 21);
+}
+
+.sidebar-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar-section {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-box {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* İçerik stil ayarları */
+
+.activity-section {
+    margin-top: 70px;
+    margin-left: 420px;
+    margin-right: 20px;
+    background-color: var(--main-color);
+}
+
+/* Container for activity blocks */
+.activity-blocks {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    background-color: var(--main-color);
+}
+
+/* Individual activity block styling */
+
+/* Styling for the add activity button */
+.add-activity-btn {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 95%;
+    min-height: 120px;
+    display: block;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.add-activity-btn:hover {
+    background-color: #d33b3b;
+    transform: scale(1.01);
+    /* Darker green on hover */
+}
+
+/* Modal styling */
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    /* Could be more or less, depending on screen size */
+    position: relative;
+    /* Position relative for absolute positioning of close button */
+}
+
+/* Close Button */
+
+#activityForm {
+    display: flex;
+    flex-direction: column;
+}
+
+#activityForm label {
+    margin-top: 10px;
+}
+
+#activityForm input {
+    margin-top: 5px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+#activityForm button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#activityForm button:hover {
+    background-color: #0056b3;
+}
+
+.search-box {
+    padding: 10px;
+    flex: 1;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 30px;
+    right: 80px;
+    border: none;
+    background: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #000;
+    z-index: 1002;
+}
+
+.close-btn:hover {
+    color: #f00;
+    /* Hover rengini değiştir */
+}
+
+/* Modal için genel stil */
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+    z-index: 1000;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    /* Could be more or less, depending on screen size */
+    z-index: 1001;
+}
+
+.modal {
+    display: none;
+    /* Varsayılan olarak gizli */
+    position: fixed;
+    z-index: 1;
+    /* Modal'ı sayfanın üstüne yerleştirir */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Koyu arka plan */
+}
+
+/* Modal İçeriği */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    /* Modal'ı ortalar */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    /* Genişlik: %80 */
+    max-width: 600px;
+    /* Maksimum genişlik */
+    border-radius: 10px;
+    /* Köşeleri yuvarlatır */
+}
+
+/* Kapatma Butonu */
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Form Grupları */
+
+/* Etiketler */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Girdi ve Textarea */
+input[type="text"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    /* Köşeleri yuvarlatır */
+    box-sizing: border-box;
+    /* Padding ve border'ı elementin toplam genişliğine dahil eder */
+    margin-bottom: 10px;
+}
+
+/* Submit Butonu */
+
+/* Radyo düğmesi stil */

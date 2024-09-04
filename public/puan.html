@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Likert Ölçeği Tablosu</title>
+    <style>
+        /* Modal Stil */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Radyo düğmesi stil */
+        .likert-scale input[type="radio"] {
+            display: none;
+        }
+
+        .likert-scale label {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .likert-scale input[type="radio"]:checked+label {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .likert-scale label:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button onclick="openModal()">Oylamayı Belirle</button>
+
+    <!-- Modal -->
+    <div id="excelModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="tableContainer"></div>
+            <button onclick="saveTable()">Kaydet</button>
+        </div>
+    </div>
+
+    <script>
+        // Likert ölçeği başlıkları
+        const headers = ['1', '2', '3', '4', '5'];
+
+        // Satır isimleri
+        const rows = ['Teknoloji', 'Görsellik', 'Donanım'];
+        function openModal() {
+            document.getElementById("excelModal").style.display = "block";
+            createTable(headers,rows);
+        }
+
+        function closeModal() {
+            document.getElementById("excelModal").style.display = "none";
+        }
+
+        function createTable(headers, rows) {
+            // HTML tablosunu oluştur
+            let tableHtml = '<table border="1"><thead><tr><td>&nbsp;</td>';
+
+            // Başlıkları ekleyin
+            headers.forEach(header => {
+                tableHtml += `<td>${header}</td>`;
+            });
+            tableHtml += '</tr></thead><tbody>';
+
+            // Satırları ekleyin
+            rows.forEach(row => {
+                tableHtml += `<tr><td>${row}</td>`;
+                headers.forEach(header => {
+                    tableHtml += `
+                    <td class="likert-scale">
+                        <input type="radio" id="${row}-${header}" name="${row}" value="${header}">
+                        <label for="${row}-${header}"></label>
+                    </td>
+                `;
+                });
+                tableHtml += '</tr>';
+            });
+
+            tableHtml += '</tbody></table>';
+
+            document.getElementById('tableContainer').innerHTML = tableHtml;
+        }
+
+        function saveTable() {
+            const table = document.querySelector('#tableContainer table');
+            const cells = table.querySelectorAll('input[type="radio"]:checked');
+
+            // Kriterler ve Puanlar listelerini oluştur
+            const kriterler = [];
+            const puanlar = [];
+
+            // Veriyi topla
+            table.querySelectorAll('tbody tr').forEach(row => {
+                const rowName = row.querySelector('td').textContent;
+                const checkedCell = row.querySelector('input[type="radio"]:checked');
+
+                if (checkedCell) {
+                    kriterler.push(rowName);
+                    puanlar.push(checkedCell.value);
+                }
+            });
+
+            console.log("Kriterler: ", kriterler);
+            console.log("Puanlar: ", puanlar);
+
+            // İşlemler tamamlandıktan sonra paneli kapatabilirsiniz
+            closeModal();
+        }
+    </script>
+
+</body>
+
+</html>

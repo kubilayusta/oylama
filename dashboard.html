@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
     <title>Document</title>
 </head>
 
@@ -75,7 +75,7 @@
                         localStorage.setItem('loggedInUser', JSON.stringify(data.user));
 
                         // Dashboard'a yönlendir
-                        window.location.href = 'index.html';
+                        window.location.href = 'dashboard.html';
                     } else {
                         // Giriş başarısız, hata mesajı göster
                         alert('Giriş başarısız.');
@@ -152,8 +152,8 @@
             <img src="images/LOGO.PNG" alt="logo" />
         </a>
         <nav class="navbar">
-            <a href="/" class="active">Ana Sayfa</a>
-            <a href="dashboard-oylama.html" >Yarışmalar</a>
+            <a href="/">Ana Sayfa</a>
+            <a href="dashboard-oylama.html" class="active">Yarışmalar</a>
             <a href="dashboard-kullanicilar.html">Kullanıcılar</a>
         </nav>
         <div class="buttons">
@@ -164,11 +164,46 @@
 
             <!-- Login ve Register Butonları -->
             <div class="auth-buttons" id="authButtons">
-                <button id="login" onclick="toggleLoginPanel()">Giriş Yap</button>
-                <button id="register" onclick="toggleRegisterPanel()">Kayıt Ol</button>
+                <button id="login" onclick="toggleLoginPanel()">LogIn</button>
+                <button id="register" onclick="toggleRegisterPanel()">Register</button>
             </div>
         </div>
     </header>
+    <div class="sidebar">
+        <h2>Sidebar Title</h2>
+        <div class="sidebar-sections">
+            <div class="sidebar-section">
+                <input type="text" placeholder="Search Section 1..." class="search-box">
+            </div>
+            <div class="sidebar-section">
+                <input type="text" placeholder="Search Section 2..." class="search-box">
+            </div>
+            <div class="sidebar-section">
+                <input type="text" placeholder="Search Section 3..." class="search-box">
+            </div>
+            <div class="sidebar-section">
+                <input type="text" placeholder="Search Section 4..." class="search-box">
+            </div>
+        </div>
+    </div>
+    <div class="activity-section">
+        <button class="add-activity-btn" onclick="addActivityBlock()">Add Activity</button>
+        <div class="activity-blocks" id="activityBlocks">
+            <!-- Existing activity blocks will be here -->
+            <div class="activity-block">
+                <h3>Etkinlik 1</h3>
+                <p>Açıklama 1</p>
+            </div>
+            <div class="activity-block">
+                <h3>Etkinlik 2</h3>
+                <p>Açıklama 2</p>
+            </div>
+            <div class="activity-block">
+                <h3>Etkinlik 3</h3>
+                <p>Açıklama 3</p>
+            </div>
+        </div>
+    </div>
 
     <script>
         function toggleProfileMenu() {
@@ -186,8 +221,8 @@
                 menu.innerHTML = `
                     <div class="profile-header">
                         <div class="profile-info">
-                            <h3>${user.first_name} ${user.last_name} <span class="user-type">(${user.user_type})</span></h3>
-                            <p>${user.mail}</p>
+                            <h3>${user.first_name} ${user.last_name} <span class="user-type">(${user.userType})</span></h3>
+                            <p>${user.email}</p>
                         </div>
                     </div>
                     <button class="account-settings-link" onclick="window.location.href='profile-settings.html'"> Account Settings </button>
@@ -200,7 +235,7 @@
 
         function logout() {
             localStorage.removeItem('loggedInUser');
-            window.location.href = 'index.html';
+            window.location.href = 'dashboard.html';
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -218,6 +253,24 @@
                 authButtons.style.display = 'flex';
             }
         });
+    </script>
+    <script>
+        function addActivityBlock() {
+            const activityBlocks = document.getElementById('activityBlocks');
+
+            // Create a new activity block element
+            const newBlock = document.createElement('div');
+            newBlock.classList.add('activity-block');
+
+            // You can customize the content here
+            newBlock.innerHTML = `
+            <h3>New Activity</h3>
+            <p>Description</p>
+        `;
+
+            // Add the new block to the activity section
+            activityBlocks.appendChild(newBlock);
+        }
     </script>
 </body>
 

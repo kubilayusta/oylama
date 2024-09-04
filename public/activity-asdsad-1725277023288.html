@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+    <title>Document</title>
+    <script src="functions.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+</head>
+
+<body>
+    <div class="form-container" id="form-container">
+        <div class="modal-content">
+            <span class="close" id="close" onclick="closetogglePanel()">&times;</span>
+            <label for="maxValue">Puanlama Aralığı Maksimum Değer:</label>
+            <input type="number" id="maxValue" name="max_value" min="1" required>
+            <form id="criteriaForm">
+                <label for="criteriaLabel">Kriter:</label>
+                <input type="text" id="criteriaLabel" name="label" required>
+                <label for="criteriaDescription">Açıklama (Opsiyonel):</label>
+                <textarea id="criteriaDescription" name="description" rows="3"></textarea>
+                <button type="submit" class="submit-btn">Kriter Ekle</button>
+            </form>
+            <div id="votingPanel" style="display: none;">
+                <div class="title">HEXATECH</div>
+                <div id="criteriaContainer"></div>
+                <button class="save-btn" onclick="saveCriteria()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="excelModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closevotemodal()">&times;</span>
+            <div id="tableContainer" class="tableContainer"></div>
+        </div>
+    </div>
+    <div id="adminexcelModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="admincloseModal()">&times;</span>
+            <div id="admintableContainer"></div>
+            <button class="submit-btn" onclick="adminsaveTable()">Kaydet</button>
+        </div>
+    </div>
+    <div class="login-panel" id="loginPanel">
+        <form id="loginForm">
+            <label for="mail">E-posta</label>
+            <input type="email" id="mail" placeholder="E-posta">
+            <label for="password">Şifre</label>
+            <input type="password" id="password" placeholder="Şifre">
+            <button onclick="submit">Giriş Yap</button>
+        </form>
+    </div>
+    <div class="register-panel" id="registerPanel">
+        <form id="registerForm">
+            <label for="first_name">İsim:</label>
+            <input type="text" id="first_name" name="first_name" required>
+
+            <label for="last_name">Soyad:</label>
+            <input type="text" id="last_name" name="last_name" required>
+
+            <label for="mail">E-Posta:</label>
+            <input type="email" id="mail" name="mail" required>
+
+            <label for="password">Şifre:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Kayıt Ol</button>
+        </form>
+        <div class="message" id="message"></div>
+        <div class="error" id="error"></div>
+    </div>
+    <div id="editmodal" class="editmodal">
+        <div class="modal-content">
+            <span class="close" id="closebutton">&times;</span>
+            <h2>Projeyi Düzenle</h2>
+            <form id="editForm">
+                <input type="hidden" id="edit-project-id">
+                <label for="edit-title">Başlık:</label>
+                <input type="text" id="edit-title" name="title" required>
+                <br><br>
+                <label for="edit-description">Açıklama:</label>
+                <textarea id="edit-description" name="description" rows="4" ></textarea>
+                <br><br>
+                <label for="edit-universty">Üniversite Bölüm:</label>
+                <textarea id="edit-universty" name="universty" rows="4" ></textarea>
+                <br><br>
+                <label for="edit-students">Öğrenci İsimleri:</label>
+                <textarea id="edit-students" name="students" rows="4" ></textarea>
+                <br><br>
+                <label for="edit-keywords">Anahtar Kelimeler:</label>
+                <textarea id="edit-keywords" name="keywords" rows="4" ></textarea>
+                <br><br>
+                <label for="edit-mentor">Mentör İsimleri:</label>
+                <textarea id="edit-mentor" name="mentor" rows="4" ></textarea>
+                <br><br>
+                <label for="edit-projecttype">Proje Tipi:</label>
+                <select id="edit-projecttype" name="projecttype">
+                    <option value="Akademik">Akademik</option>
+                    <option value="Endustriyel">Endüstriyel</option>
+                    <option value="Bilimsel">Bilimsel</option>
+                    <option value="Diger">Diğer</option>
+                </select>
+                <br><br>
+                <button type="submit" class="submit-btn">Kaydet</button>
+            </form>
+        </div>
+    </div>
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close" onclick="closeModal()">&times;</span>
+            <h2>Yeni Proje Ekle</h2>
+            <form id="projectForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <input type="hidden" id="add-project-id">
+                    <label for="proje-basligi">Proje Başlığı:</label>
+                    <input type="text" id="proje-basligi" name="proje_basligi" required>
+
+                    <label for="aciklama">Açıklama:</label>
+                    <textarea id="aciklama" name="aciklama" ></textarea>
+
+                    <label for="universite-bolum">Üniversite Bölüm:</label>
+                    <input type="text" id="universite-bolum" name="universite_bolum" >
+
+                    <label for="ogrenci-isimleri">Öğrenci İsimleri:</label>
+                    <input type="text" id="ogrenci-isimleri" name="ogrenci_isimleri" >
+
+                    <label for="anahtar-kelimeler">Anahtar Kelimeler:</label>
+                    <input type="text" id="anahtar-kelimeler" name="anahtar_kelimeler" >
+
+                    <label for="mentor-isimleri">Mentör İsimleri:</label>
+                    <input type="text" id="mentor-isimleri" name="mentor_isimleri" >
+
+                    <label for="proje-tipi">Proje Tipi:</label>
+                    <select id="proje-tipi" name="proje_tipi" >
+                        <option value="Akademik">Akademik</option>
+                        <option value="Endustriyel">Endüstriyel</option>
+                        <option value="Bilimsel">Bilimsel</option>
+                        <option value="Diger">Diğer</option>
+                    </select>
+
+                    <label for="fotoğraf">Fotoğraf (PNG Yükleyin):</label>
+                    <input type="file" id="fotoğraf" name="fotoğraf" accept="image/png">
+
+                    <label for="proje-dosyasi">Proje Dosyası (PDF Yükleyin):</label>
+                    <input type="file" id="proje-dosyasi" name="proje_dosyasi" accept="application/pdf">
+                    <button type="submit" class="submit-btn" value="Yükle">Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="projectPanel" class="project-modal" style="display: none;">
+        <div class="modal-content">
+            <button id="closeButton" class="close">&times;</button>
+
+            <h1 id="proje-basligi2">Proje Adı</h1>
+            <h2>Açıklama:</h2>
+            <p id="aciklama2">Proje Açıklaması</p>
+
+            <h2>Üniversite:</h2>
+            <p id="universite-bolum2">Proje Tarihi</p>
+
+            <h2>Öğrenciler:</h2>
+            <p id="ogrenci-isimleri2">Proje Sahibi</p>
+
+            <h2>Anahtar Kelimeler:</h2>
+            <p id="anahtar-kelimeler2">Proje Sahibi</p>
+
+            <h2>Mentör:</h2>
+            <p id="mentor-isimleri2">Proje Sahibi</p>
+
+            <h2>Proje Tipi:</h2>
+            <p id="proje-tipi2">Proje Sahibi</p>
+        </div>
+    </div>
+    <div id="voteModal" class="vote-modal" style="display: none;">
+        <div id="modal-content" class="modal-content">
+            <h2>Oy Ver</h2>
+            <div id="criteriaContainer"></div>
+            <form id="voteForm">
+                <!-- Form elemanları buraya eklenecek -->
+            </form>
+            <button type="button" id="saveVoteButton" class="save-vote-button">Kaydet</button>
+            <button type="button" id="closeVoteModalButton" class="close">&times;</button>
+        </div>
+    </div>
+    <header class="header">
+        <a href="https://www.havelsan.com.tr" class="logo" target="_blank">
+            <img src="images/LOGO.PNG" alt="logo" />
+        </a>
+        <nav class="navbar">
+            <a href="/">Ana Sayfa</a>
+            <a href="dashboard-oylama.html" class="active">Yarışmalar</a>
+            <a href="dashboard-kullanicilar.html">Kullanıcılar</a>
+        </nav>
+        <div class="buttons">
+            <button id="observerMode" class= "observerMode hidden">Kullanıcı Modu</button>
+            <button class="profile-btn" style="display:none;" onclick="toggleProfileMenu()">
+                <i class="fas fa-user"></i>
+            </button>
+            <div class="profile-menu" id="profileMenu"></div>
+            <div class="auth-buttons" id="authButtons">
+                <button id="login" onclick="toggleLoginPanel()">Giriş Yap</button>
+                <button id="register" onclick="toggleRegisterPanel()">Kayıt Ol</button>
+            </div>
+        </div>
+    </header>
+    <div class="main-block">
+        <div class="full-page-block">
+            <div class="competition-container">
+                <div class="competition-details">
+                    <img src="images/suit.png" alt="Yarışma Fotoğrafı" class="competition-image">
+                    <div class="competition-info">
+                        <div class="competition-name">
+                            <span id="competitionNameText"></span>
+                            <button class="edit-btn hidden" onclick="editCompetitionName()">Düzenle</button>
+                        </div>
+                        <div class="competition-dates">
+                            <span id="competitionDatesText"></span>
+                            <button class="edit-btn hidden" onclick="editCompetitionDates()">Düzenle</button>
+                        </div>
+                    </div>
+                    <div class="competition-actions">
+                        <button class="oylama_belirle hidden" onclick="adminopenModal()" id="oylama_belirle">Oylamayı Belirle</button>
+                        <button id = "toggle-btn" class="toggle-btn hidden" onclick="togglePanel()">Oylama Şablonu Ekle</button>
+                        <div id="qrcode">
+                            <button class="copy-link-btn" onclick="copyLink()">Linki Kopyala
+                                <span id="copy-success" class="copy-success-icon">✔️</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button id="addTitleBtn" class="addTitleBtn hidden">Başlık Ekle</button>
+                <button id="addRowBtn" class="addRowBtn hidden">Satır Ekle</button>
+                <div id="content"></div>
+                <div id="contentModal" class="modal">
+                    <div class="modal-content">
+                        <button id="content-close-button" class="close">&times;</button>
+                        <textarea id="inputText" placeholder="Metninizi girin" rows="5" cols="30"></textarea><br><br>
+                        <button id="submitBtn">Ekle</button>
+                    </div>
+                </div>
+                <div id="editcontentModal" class="editmodal">
+                    <div class="editmodal-content">
+                        <button id="editcontent-close-button" class="close">&times;</button>
+                        <textarea id="editinputText" placeholder="Metninizi girin" rows="5"
+                            cols="30"></textarea><br><br>
+                        <button id="editsubmitBtn">Ekle</button>
+                    </div>
+                </div>
+                <div class="project-section">
+                    <h2>Projeler</h2>
+                    <button id="add-project-btn" class="add-project-btn hidden" onclick="openModal()">
+                        <i class="fa-solid fa-circle-plus" style="font-size: 300%;"></i>
+                    </button>
+                    <div class="project-section">
+                        <div id="button-container" class="button-container"></div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                var user = JSON.parse(localStorage.getItem('loggedInUser'));
+                const html = document.getElementsByTagName('html');
+                const pathname = window.location.pathname;
+                const lastSegment = pathname.split('/').pop();
+                let timeoutId = null;
+                const url = window.location.href;
+                const qrCodeDiv = document.getElementById("qrcode");
+                qrcode(url, qrCodeDiv)
+                addproject()
+                login()
+                loginpanel()
+                register()
+                registerpanel()
+                loggeduser()
+                projectfetch()
+                savescroll()
+                loadscroll()
+                closeedit()
+                editproject()
+                documents()
+
+                window.onload = control_user_type;
+            </script>
+            <script>
+
+
+                function closevotemodal() {
+                    document.getElementById("excelModal").style.display = "none";
+                }
+
+                function createTable(headers, rows, project) {
+
+                    // HTML tablosunu oluştur
+                    let tableHtml = `<h1>${project.title}</h1>`;
+                    tableHtml += '<table border="1"><thead><tr><td>&nbsp;</td>'
+                    // Başlıkları ekleyin
+                    headers.forEach(header => {
+                        tableHtml += `<td>${header}</td>`;
+                    });
+                    tableHtml += '</tr></thead><tbody>';
+
+                    // Satırları ekleyin
+                    rows.forEach(row => {
+                        tableHtml += `<tr><td>${row}</td>`;
+                        headers.forEach(header => {
+                            tableHtml += `
+                    <td class="likert-scale">
+                        <input type="radio" id="${row}-${header}" name="${row}" value="${header}">
+                        <label for="${row}-${header}"></label>
+                    </td>
+                `;
+                        });
+                        tableHtml += '</tr>';
+                    });
+
+                    tableHtml += '</tbody></table>';
+
+                    document.getElementById('tableContainer').innerHTML = tableHtml;
+                    const tableContainer = document.querySelector('.tableContainer');
+
+                    // Yeni buton elementi oluşturun
+                    const saveButton = document.createElement('button');
+                    saveButton.className = 'submit-btn';
+                    saveButton.textContent = 'Kaydet';
+                    saveButton.setAttribute('onclick', `saveTable(${projectId})`);
+
+                    // Butonu 'tableContainer' div'inin altına ekleyin
+                    tableContainer.appendChild(saveButton);
+                }
+
+                function saveTable(projectId) {
+                    const table = document.querySelector('#tableContainer table');
+                    const cells = table.querySelectorAll('input[type="radio"]:checked');
+
+                    // Kriterler ve Puanlar listelerini oluştur
+                    const kriterler = [];
+                    const puanlar = [];
+
+                    // Veriyi topla
+                    table.querySelectorAll('tbody tr').forEach(row => {
+                        const rowName = row.querySelector('td').textContent;
+                        const checkedCell = row.querySelector('input[type="radio"]:checked');
+
+                        if (checkedCell) {
+                            kriterler.push(rowName);
+                            puanlar.push(checkedCell.value);
+                        }
+                    });
+                    const kriterlerStr = JSON.stringify(kriterler);
+                    const puanlarStr = JSON.stringify(puanlar);
+
+                    // İşlemler tamamlandıktan sonra paneli kapatabilirsiniz
+                    fetch(`/votes/${projectId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            kriterlerStr: kriterlerStr,
+                            puanlarStr: puanlarStr,
+                            user_id: user.user_id // Dinamik olarak oluşturulmuş kriterler nesnesi
+                        }),
+                    }).then(response => response.json())
+                        .then(data => {
+                        })
+                        .catch(error => {
+                            console.error('Fetch Error:', error);
+                        });
+                    closevotemodal();
+                }
+            </script>
+            <script>
+                function adminopenModal() {
+                    document.getElementById("adminexcelModal").style.display = "block";
+                    admincreateTable();
+                }
+
+                function admincloseModal() {
+                    document.getElementById("adminexcelModal").style.display = "none";
+                }
+
+                function admincreateTable() {
+                    // Kullanıcıdan başlıkları alın
+                    const headersInput = prompt("Başlıkları virgülle ayırarak girin (örn: Beden, Türkçe):");
+                    const scores = headersInput ? headersInput.split(',').map(header => header.trim()) : [];
+
+                    // Kullanıcıdan puanları alın
+                    const scoresInput = prompt("Puanları virgülle ayırarak girin (örn: Sinem, Ahmet):");
+                    const headers = scoresInput ? scoresInput.split(',').map(score => score.trim()) : [];
+
+                    // HTML tablosunu oluştur
+                    let tableHtml = `<table border="1"><thead><tr><td></td>`;
+
+                    // Başlıkları ekleyin
+                    headers.forEach(header => {
+                        tableHtml += `<td>${header}</td>`;
+                    });
+                    tableHtml += '</tr></thead><tbody>';
+
+                    // Puanları ekleyin
+                    scores.forEach(score => {
+                        tableHtml += `<tr><td>${score}</td>`;
+                        headers.forEach(() => {
+                            tableHtml += '<td></td>'; // Doldurulabilir hücreler
+                        });
+                        tableHtml += '</tr>';
+                    });
+
+                    tableHtml += '</tbody></table>';
+
+                    document.getElementById('admintableContainer').innerHTML = tableHtml;
+                }
+
+                function adminsaveTable() {
+                    fetch(`/get-challenge-id?html_id=${lastSegment}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.challenge_id) {
+                                challenge_id = data.challenge_id;
+                                const table = document.querySelector('#admintableContainer table');
+                                const rows = table.querySelectorAll('tr');
+                                const headers = [];
+                                const rowHeaders = [];
+
+                                // Extract column headers (skip the first cell in the first row)
+                                Array.from(rows[0].querySelectorAll('td')).slice(1).forEach(cell => {
+                                    headers.push(cell.textContent);
+                                });
+
+                                // Extract row headers (the first cell in each subsequent row)
+                                Array.from(rows).slice(1).forEach(row => {
+                                    rowHeaders.push(row.querySelector('td').textContent);
+                                });
+
+                                console.log("Başlıklar: ", headers);
+                                console.log("Veri: ", rowHeaders);
+
+                                const kriterlerStr = JSON.stringify(headers);
+                                const puanlarStr = JSON.stringify(rowHeaders);
+                                // İşlemler tamamlandıktan sonra paneli kapatabilirsiniz
+                                fetch(`/vote_tables/${challenge_id}`)
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error(`Server error: ${response.status}`);
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        if (!data.vote_columns || !data.vote_rows) {
+                                            throw new Error('Data format error');
+                                        }
+
+                                        // Eğer `data.exists` varsa
+                                        if (data.vote_columns.length > 0 && data.vote_rows.length > 0) {
+                                            return fetch(`/vote_tables/${challenge_id}`, {
+                                                method: 'PUT',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                },
+                                                body: JSON.stringify({
+                                                    kriterlerStr: kriterlerStr,
+                                                    puanlarStr: puanlarStr
+                                                }),
+                                            });
+                                        } else {
+                                            // Eğer veriler mevcut değilse
+                                            console.log(kriterlerStr);
+                                            console.log(puanlarStr);
+                                            return fetch(`/vote_tables/${challenge_id}`, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                },
+                                                body: JSON.stringify({
+                                                    kriterlerStr: kriterlerStr,
+                                                    puanlarStr: puanlarStr
+                                                }),
+                                            });
+                                        }
+                                    })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error(`Server error: ${response.status}`);
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        alert(data.message);
+                                        admincloseModal(); // Close modal after successful request
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                    });
+                            };
+                        });
+                }
+            </script>
+            <script>
+                let criteriaData = [];
+                let editingIndex = null;
+                function togglePanel() {
+                    const panel = document.getElementById("form-container");
+                    panel.style.display = panel.style.display = "block";
+                }
+                function closetogglePanel() {
+                    const panel = document.getElementById("form-container");
+                    panel.style.display = panel.style.display = "none";
+                }
+
+                function generateCriteria() {
+                    const container = document.getElementById('criteriaContainer');
+                    container.innerHTML = '';
+                    debugger
+                    criteriaData.forEach((criteria, index) => {
+                        console.log(criteria)
+                        const criteriaDiv = document.createElement('div');
+                        criteriaDiv.classList.add('criteria');
+                        if (index === editingIndex) {
+                            criteriaDiv.classList.add('editing');
+                        }
+
+                        const label = document.createElement('label');
+                        label.classList.add('criteria-label');
+                        label.textContent = criteria.label;
+
+                        const description = document.createElement('p');
+                        description.textContent = criteria.description;
+
+                        const radioGroup = document.createElement('div');
+                        radioGroup.classList.add('radio-group');
+
+                        let lastSelectedRadio1 = null;
+
+                        for (let i = 1; i <= criteria.maxValue; i++) {
+                            const radioLabel = document.createElement('label');
+                            const input = document.createElement('input');
+                            input.type = 'radio';
+                            input.value = i;
+                            radioLabel.appendChild(input);
+                            radioLabel.appendChild(document.createTextNode(i));
+                            radioGroup.appendChild(radioLabel);
+
+                            input.addEventListener('click', function () {
+
+                                if (lastSelectedRadio1 === this1) {
+                                    this1.checked = false;
+                                    lastSelectedRadio1 = null;
+                                } else {
+                                    lastSelectedRadio1 = this1;
+                                }
+                            });
+                        }
+
+                        criteriaDiv.appendChild(label);
+                        criteriaDiv.appendChild(description);
+                        criteriaDiv.appendChild(radioGroup);
+
+                        const editDeleteDiv = document.createElement('div');
+                        editDeleteDiv.classList.add('edit-delete-buttons');
+
+                        const editButton = document.createElement('button');
+                        editButton.textContent = 'Edit';
+                        editButton.onclick = () => editCriteria(index);
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.onclick = () => deleteCriteria(index);
+
+                        editDeleteDiv.appendChild(editButton);
+                        editDeleteDiv.appendChild(deleteButton);
+
+                        criteriaDiv.appendChild(editDeleteDiv);
+
+                        container.appendChild(criteriaDiv);
+                    });
+                }
+
+                function togglerecreatedPanel() {
+                    const panel = document.getElementById("recreatedPanel");
+                    panel.style.display = panel.style.display === "none" || panel.style.display === "" ? "block" : "none";
+                }
+                document.getElementById('criteriaForm').addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    document.getElementById("votingPanel").style.display = "block";
+
+                    const label = document.getElementById('criteriaLabel').value;
+                    const description = document.getElementById('criteriaDescription').value;
+                    const maxValue = parseInt(document.getElementById('maxValue').value);
+
+                    if (editingIndex !== null) {
+                        criteriaData[editingIndex] = { label, description, maxValue };
+                        editingIndex = null;
+                    } else {
+                        criteriaData.push({ label, description, maxValue });
+                    }
+
+                    this.reset();
+                    generateCriteria();
+                });
+                function deleteCriteria(index) {
+                    criteriaData.splice(index, 1);
+                    if (editingIndex === index) {
+                        editingIndex = null;
+                    }
+                    generateCriteria();
+                }
+                function editCriteria(index) {
+                    const criteria = criteriaData[index];
+                    document.getElementById('criteriaLabel').value = criteria.label;
+                    document.getElementById('criteriaDescription').value = criteria.description;
+                    document.getElementById('maxValue').value = criteria.maxValue;
+
+                    editingIndex = index;
+                    generateCriteria();
+                }
+                function saveCriteria() {
+                    const labelList = criteriaData.map(criteria => criteria.label);
+                    const descriptionList = criteriaData.map(criteria => criteria.description);
+                    const maxvalueList = criteriaData.map(criteria => criteria.maxValue);
+
+                    console.log("Label List:", labelList);
+                    console.log("Description List:", descriptionList);
+
+                    const str_labelList = JSON.stringify(labelList)
+                    const str_descriptionList = JSON.stringify(descriptionList)
+                    const str_maxvalueList = JSON.stringify(maxvalueList)
+
+                    fetch('/oy_paneli', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            criterias: str_labelList,
+                            descriptions: str_descriptionList,
+                            points: str_maxvalueList
+                        })
+                    })
+                        .then(data => {
+                            console.log('Data successfully sent:', data);
+                            let modal = document.getElementById("form-container")
+                            modal.style.display = "none"; // Modalı kapat
+
+                            // Buton öğesini seç
+                            const updateButton = document.getElementById('toggle-btn');
+
+                            // Butonun metnini değiştir ve rengini koyulaştır
+                            updateButton.textContent = 'Şablon Eklendi';
+                            updateButton.style.backgroundColor = '#388E3C'; // Daha koyu yeşil
+                            updateButton.style.color = '#FFFFFF'; // Beyaz metin rengi
+
+                            // 2 saniye sonra butonu eski haline döndür
+                            setTimeout(() => {
+                                updateButton.textContent = 'Oylama Şablonu Ekle';
+                                updateButton.style.backgroundColor = ''; // Orijinal arka plan rengi
+                                updateButton.style.color = ''; // Orijinal metin rengi
+                            }, 2000); // 2000 milisaniye = 2 saniye
+                        })
+                        .catch(error => {
+                            console.error('There was a problem with the fetch operation:', error);
+                        });
+                }
+                function loadCriteria() {
+
+                }
+
+                function generateTable(labels, descriptions, values) {
+                    const container = document.getElementById('recreatedPanel');
+                    container.innerHTML = '';
+
+                    for (let i = 0; i < labels.length; i++) {
+                        const criteriaDiv = document.createElement('div');
+                        criteriaDiv.classList.add('criteria');
+
+                        const label = document.createElement('label');
+                        label.classList.add('criteria-label');
+                        label.textContent = labels[i];
+
+                        const description = document.createElement('p');
+                        description.textContent = descriptions[i];
+
+                        const radioGroup = document.createElement('div');
+                        radioGroup.classList.add('radio-group');
+
+                        let lastSelectedRadio = null;
+
+                        for (let j = 1; j <= values[i]; j++) {
+                            const radioLabel = document.createElement('label');
+                            const input = document.createElement('input');
+                            input.type = 'radio';
+                            input.name = `criteria-${i}`;
+                            input.value = j;
+
+                            input.addEventListener('click', function () {
+                                if (lastSelectedRadio === this) {
+                                    this.checked = false;
+                                    lastSelectedRadio = null;
+                                } else {
+                                    lastSelectedRadio = this;
+                                }
+                            });
+
+                            radioLabel.appendChild(input);
+                            radioLabel.appendChild(document.createTextNode(j));
+                            radioGroup.appendChild(radioLabel);
+                        }
+
+                        criteriaDiv.appendChild(label);
+                        criteriaDiv.appendChild(description);
+                        criteriaDiv.appendChild(radioGroup);
+
+                        container.appendChild(criteriaDiv);
+                    }
+                    togglerecreatedPanel()
+                }
+
+
+                generateCriteria();
+            </script>
+
+</body>
+
+</html>
